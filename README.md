@@ -1,6 +1,6 @@
 #Blue pill STM32 based 2way communication device.
 
-You can view received messeges on screen and send with onscreen keyboard.
+You can view received messages on screen and send with onscreen keyboard.
 
 You will need:
 
@@ -14,17 +14,17 @@ You will need:
 
 -RA-02 LoRa module.
 
-*To communicate you need atleast two devices :)
+*To communicate youll need atleast two devices :)
 
 
 Modify source for MAX/MIN X/Y touch, depens on tft.
 
 Also LoRa setting can be modified (SpreadingFactor, Bandwidth, CodingRate).
 
-All messeges are logged to SD card in 'current date's filename' (ie 29092019).
+All messages are logged to SD card in 'current date's filename' (ie 29092019).
 
 
-Messeges scrolling-up are currently not implemented. 
+Messages scrolling-up are currently not implemented. 
 
 
 Hardware connections:
