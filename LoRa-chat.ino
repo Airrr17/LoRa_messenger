@@ -70,20 +70,19 @@ bool command = false;                                  //command or message? exe
 bool calib = false;
 const char textLimit = 53;                             //Max message len
 char MyBuffer[textLimit];
-//char line0[textLimit];
-//char line1[textLimit];
-//char line2[textLimit];
-//char line3[textLimit];
-//char line4[textLimit];
-//char line5[textLimit];
-//char line6[textLimit];
-//char line7[textLimit];
-//char line8[textLimit];
-//char line9[textLimit];
 uint16_t xy[2];
 ts tiime;                                              //ts is a struct findable in ds3231.h
 char s[17];                                            //RTCtime sprint buffer
 char sdate[9];                                         //RTC date for filenaming
+
+String liniya;
+//char *myStrings[] = {"This is string 1", "This is string 2", "This is string 3",
+//                     "This is string 4", "This is string 5", "This is string 6"
+//                    };
+char lines[9][55];
+//char lines[] = {"","","","","","","","","",""};
+//int currentLine = 9;   //from bottom
+//int currentChar = 1;
 
 //char fileLine[100];                                  //Read a line from file
 
@@ -94,14 +93,9 @@ SdFat SD;
 File myFile;
 
 void setup() {
-  //  mySPI.beginTransaction(SPISettings(4000000, MSBFIRST, SPI_MODE0)); //1000000
+  mySPI.beginTransaction(SPISettings(2000000, MSBFIRST, SPI_MODE0)); //1000000
 
   Serial.begin(115200);
-  delay(300);                                    //USB serial init time.
-  Wire.begin();                                  //For RTC. SCL-PB6, SDA-PB7
-  tft.begin();
-  tft.fillScreen(ILI9341_BLUE);
-  tft.setRotation(7); //7 or -1-
 
   pinMode(PB0, OUTPUT);                          //LoRa Reset pin
   pinMode(PB1, INPUT);                           //LoRa Interrupt pin
@@ -112,11 +106,21 @@ void setup() {
   pinMode(PC13, OUTPUT);                         //OnBoard LED
   pinMode(PA3, OUTPUT);                          //SD card slave select
 
+  gpio_write_bit(GPIOB, 11, 1);
+  gpio_write_bit(GPIOA, 4, 1);
+  gpio_write_bit(GPIOA, 3, 1);
+
+  delay(100);                                    //USB serial init time.
+  Wire.begin();                                  //For RTC. SCL-PB6, SDA-PB7
+  tft.begin();
+  tft.fillScreen(ILI9341_BLUE);
+  tft.setRotation(7); //7 or -1-
   DS3231_init(DS3231_INTCN);                     //register the ds3231 (DS3231_INTCN is the default address of ds3231, this is set by macro for no performance loss)
 
-  if (!SD.begin(PA3, SPI_HALF_SPEED)) {          //or (!SD.begin(PA3))
+  delay (50);
+  if (!SD.begin(PA3)) {          //or (!SD.begin(PA3))  //(!SD.begin(PA3, SPI_FULL_SPEED))
     tft.setTextSize(2);
-    tft.setCursor(5, 5);
+    tft.setCursor(0, 0);
     tft.setTextColor(ILI9341_WHITE, ILI9341_RED);
     tft.println(F("SDcard init. failed!"));
     tft.print(F("       Try reset."));
@@ -125,13 +129,13 @@ void setup() {
     while (1);
   }
 
-  delay(200);
+  delay(50);
 
   LoRa.setPins(PA0, PB0, PB1);                   //(ss, reset, dio0-interrupt)
   //  LoRa.setSPIFrequency(2E6);
   if (!LoRa.begin(433000000)) {                  //433e6 Hz
     tft.setTextSize(2);
-    tft.setCursor(5, 5);
+    tft.setCursor(0, 0);
     tft.setTextColor(ILI9341_WHITE, ILI9341_RED);
     tft.print(F("LoRa connection failed!"));
     delay(500);
@@ -160,7 +164,7 @@ void setup() {
 
   myFile = SD.open(sdate, FILE_WRITE);
 
-  ////////////////////////////// READ LINE if file exist /////////////////////////////
+  ////////////////////////////// READ first LINE from file if exist /////////////////////////////
   tft.setTextSize(1);
   tft.setTextColor(ILI9341_WHITE, ILI9341_BLACK);
   tft.setCursor(1, 231);
@@ -169,9 +173,9 @@ void setup() {
   //    myFile.close();
   tft.print("Using logfile: ");
   tft.print(sdate);
-  ////////////////////////////// READ LINE if file exist /////////////////////////////
-  tft.setCursor(0, 0);
-  tft.print("12345678901234567890123456789012345678901234567890abc12345678901234567890123456789012345678901234567890abc12345678901234567890123456789012345678901234567890abc12345678901234567890123456789012345678901234567890abc12345678901234567890123456789012345678901234567890abc12345678901234567890123456789012345678901234567890abc12345678901234567890123456789012345678901234567890abc12345678901234567890123456789012345678901234567890abc12345678901234567890123456789012345678901234567890abc12345678901234567890123456789012345678901234567890abc");
+  ////////////////////////////// READ first LINE from file if exist /////////////////////////////
+  // tft.setCursor(0, 0);
+  //tft.print("12345678901234567890123456789012345678901234567890abc12345678901234567890123456789012345678901234567890abc12345678901234567890123456789012345678901234567890abc12345678901234567890123456789012345678901234567890abc12345678901234567890123456789012345678901234567890abc12345678901234567890123456789012345678901234567890abc12345678901234567890123456789012345678901234567890abc12345678901234567890123456789012345678901234567890abc12345678901234567890123456789012345678901234567890abc12345678901234567890123456789012345678901234567890abc");
   //tft.println("12345678901234567890123456789012345678901234567890abc");
   //tft.println("3");
   //tft.println("4");
@@ -216,6 +220,9 @@ void loop() {
       char rxsym = LoRa.read();
       tft.print(rxsym);
       myFile.print(rxsym);
+
+      //      lines[currentLine][0] = 1;        // 1 falgs Rx
+      //      lines[currentLine][currentChar++] = rxsym;    //
     }
 
     // print RSSI of packet
@@ -230,6 +237,8 @@ void loop() {
     myFile.println(snr);
     tft.setTextSize(2);
     myFile.flush();
+
+    //  moveUP();
   }
 
 
@@ -241,7 +250,7 @@ void loop() {
     sprintf_P(sdate, PSTR("%02d%02d%02d"), tiime.mday, tiime.mon, tiime.year);
     tft.setTextSize(1);                               //Serial.println(s);
     tft.setTextColor(ILI9341_WHITE, ILI9341_BLACK);
-    tft.setCursor(211, 231);
+    tft.setCursor(200, 221);  //(211, 231)
     tft.print(s);
   }
 }
@@ -432,13 +441,25 @@ void GetKeyPress(char * textBuffer) {
       if (strcmp(textBuffer, "calibOFF") == 0) calib = false, command = true;
 
       if (!command) {
-        Serial.print(s);
-        Serial.print("  Tx: ");
-        Serial.println(textBuffer); //or      //  Serial.println(MyBuffer);       //   <---- tut main sending!
+        //        Serial.print(s);
+        //        Serial.print("  Tx: ");
+        //        Serial.println(textBuffer); //or      //  Serial.println(MyBuffer);       //   <---- tut main sending!
         myFile.print(s);
         myFile.print("  Tx: ");
         myFile.println(textBuffer);
         myFile.flush();
+
+        //      lines[currentLine][0] = 0;               // 1 falgs Tx
+        // lines[9][1] = strcat( textBuffer, msg.c_str() );;    //
+        //        strcat( lines[9][1], MyBuffer.c_str() );
+        //        memcpy(textBuffer, lines[9][1], sizeof(textBuffer));
+        //        moveUP();
+        //        for (int go = 0; go < strlen(MyBuffer); go++) {
+        //          lines[9][go] = MyBuffer[go];
+        //        }
+        liniya = String(textBuffer);
+        moveUP();
+        //Serial.print("reTURn");
       }
 
       command = false;
@@ -462,3 +483,21 @@ void GetKeyPress(char * textBuffer) {
   tft.setTextSize(2);
 }
 //======================================================================Vsyakaya hernya=====================================
+
+void moveUP() {
+//  int go = 0;
+//    for (go = 0; go < liniya.length() ; go++) {
+//  lines[9][go]=*liniya;
+//      Serial.print(lines[9][go]);
+//    }
+  // liniya.toCharArray(lines[9][0], liniya.length());
+
+  //  sprintf(lines[9], liniya);
+  //strcpy(lines[9], liniya);
+  //lines[9] = liniya;//.toCharArray, liniya.length();//, '\0';
+  //liniya.toCharArray(lines[9], liniya.length() + 1);
+  //Serial.println(" tut tratatatatatatata MyBuffer");
+  Serial.println(liniya);//
+  //Serial.print("VSE");
+  //po
+}
