@@ -24,7 +24,6 @@ Also LoRa setting can be modified (SpreadingFactor, Bandwidth, CodingRate).
 All messages are logged to SD card in 'current date's filename' (ie 29092019).
 
 
-Messages scrolling-up are currently not implemented. 
 
 
 Hardware connections:
@@ -39,7 +38,7 @@ MOSI       - PA7
 
 TFT SS     - PA4
 
-SD SS      - PA3
+SD SS      - PA3 (weak pullup adviced)
 
 TFT DC     - PA1
 

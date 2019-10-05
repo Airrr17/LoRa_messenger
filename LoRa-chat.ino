@@ -72,17 +72,21 @@ const char textLimit = 53;                             //Max message len
 char MyBuffer[textLimit];
 uint16_t xy[2];
 ts tiime;                                              //ts is a struct findable in ds3231.h
-char s[17];                                            //RTCtime sprint buffer
-char sdate[9];                                         //RTC date for filenaming
+char s[19];                                            //RTCtime sprint buffer
+char sdate[10];                                         //RTC date for filenaming
 
 String liniya;
-//char *myStrings[] = {"This is string 1", "This is string 2", "This is string 3",
-//                     "This is string 4", "This is string 5", "This is string 6"
-//                    };
-char lines[9][55];
-//char lines[] = {"","","","","","","","","",""};
-//int currentLine = 9;   //from bottom
-//int currentChar = 1;
+
+char lines0[55];
+char lines1[55];
+char lines2[55];
+char lines3[55];
+char lines4[55];
+char lines5[55];
+char lines6[55];
+char lines7[55];
+char lines8[55];
+char lines9[55];
 
 //char fileLine[100];                                  //Read a line from file
 
@@ -154,10 +158,6 @@ void setup() {
   tscr.begin();
   MakeKB_Button(Mobile_KB);
 
-  //  LoRa.beginPacket();
-  //  LoRa.print("hello AAA");
-  //  LoRa.endPacket();
-
   DS3231_get(&tiime);    ///////////// dlya filename //////////////
   sprintf_P(s, PSTR("%02d.%02d.%02d  %02d:%02d:%02d"), tiime.mday, tiime.mon, tiime.year_s , tiime.hour, tiime.min, tiime.sec);
   sprintf_P(sdate, PSTR("%02d%02d%02d"), tiime.mday, tiime.mon, tiime.year);
@@ -174,17 +174,6 @@ void setup() {
   tft.print("Using logfile: ");
   tft.print(sdate);
   ////////////////////////////// READ first LINE from file if exist /////////////////////////////
-  // tft.setCursor(0, 0);
-  //tft.print("12345678901234567890123456789012345678901234567890abc12345678901234567890123456789012345678901234567890abc12345678901234567890123456789012345678901234567890abc12345678901234567890123456789012345678901234567890abc12345678901234567890123456789012345678901234567890abc12345678901234567890123456789012345678901234567890abc12345678901234567890123456789012345678901234567890abc12345678901234567890123456789012345678901234567890abc12345678901234567890123456789012345678901234567890abc12345678901234567890123456789012345678901234567890abc");
-  //tft.println("12345678901234567890123456789012345678901234567890abc");
-  //tft.println("3");
-  //tft.println("4");
-  //tft.println("5");
-  //tft.println("6");
-  //tft.println("7");
-  //tft.println("8");
-  //tft.println("9");
-  //tft.println("10");
 
 }
 
@@ -207,38 +196,26 @@ void loop() {
   int packetSize = LoRa.parsePacket();
   if (packetSize) {
     // received a packet
-    tft.setTextSize(1);
-    tft.setTextColor(ILI9341_WHITE, ILI9341_BLACK);
-    tft.setCursor(1, 1);
 
-    tft.print("Rx: ");
     myFile.print(s);
     myFile.print("  Rx: ");
 
     ///////////////////////////////// read packet
     while (LoRa.available()) {
-      char rxsym = LoRa.read();
-      tft.print(rxsym);
-      myFile.print(rxsym);
+      liniya = LoRa.readString();
+      myFile.print(liniya);
 
-      //      lines[currentLine][0] = 1;        // 1 falgs Rx
-      //      lines[currentLine][currentChar++] = rxsym;    //
     }
 
-    // print RSSI of packet
-    tft.print("' RSSI: ");
     myFile.print("   With RSSI: ");
-    tft.print(LoRa.packetRssi());
     myFile.print(LoRa.packetRssi());
-    tft.print(" SNR: ");
     myFile.print(" SNR: ");
     float snr = LoRa.packetSnr();
-    tft.println(snr);
     myFile.println(snr);
-    tft.setTextSize(2);
     myFile.flush();
 
-    //  moveUP();
+    liniya = 'R' + liniya;
+    moveUP();
   }
 
 
@@ -250,7 +227,7 @@ void loop() {
     sprintf_P(sdate, PSTR("%02d%02d%02d"), tiime.mday, tiime.mon, tiime.year);
     tft.setTextSize(1);                               //Serial.println(s);
     tft.setTextColor(ILI9341_WHITE, ILI9341_BLACK);
-    tft.setCursor(200, 221);  //(211, 231)
+    tft.setCursor(211, 231);  //(211, 231)(200, 221)
     tft.print(s);
   }
 }
@@ -316,6 +293,7 @@ void MakeKB_Button(const char type[][13])
   tft.print(F("SPACE BAR"));
 
   tft.fillRect(1, 86, 318, 12, 0x03EF);          //text input field 0x3186
+  pechat();
 }
 //======================================================================Vsyakaya hernya=====================================
 void drawButton(int x, int y, int w, int h)
@@ -449,17 +427,13 @@ void GetKeyPress(char * textBuffer) {
         myFile.println(textBuffer);
         myFile.flush();
 
-        //      lines[currentLine][0] = 0;               // 1 falgs Tx
-        // lines[9][1] = strcat( textBuffer, msg.c_str() );;    //
-        //        strcat( lines[9][1], MyBuffer.c_str() );
-        //        memcpy(textBuffer, lines[9][1], sizeof(textBuffer));
-        //        moveUP();
-        //        for (int go = 0; go < strlen(MyBuffer); go++) {
-        //          lines[9][go] = MyBuffer[go];
-        //        }
+        //  LoRa.beginPacket();      /////////////////// UNCOMENT FOR REAL SENDING!!!//////////////////////
+        //  LoRa.print(textBuffer);
+        //  LoRa.endPacket();
+
         liniya = String(textBuffer);
+        liniya = 'T' + liniya;
         moveUP();
-        //Serial.print("reTURn");
       }
 
       command = false;
@@ -485,19 +459,82 @@ void GetKeyPress(char * textBuffer) {
 //======================================================================Vsyakaya hernya=====================================
 
 void moveUP() {
-//  int go = 0;
-//    for (go = 0; go < liniya.length() ; go++) {
-//  lines[9][go]=*liniya;
-//      Serial.print(lines[9][go]);
-//    }
-  // liniya.toCharArray(lines[9][0], liniya.length());
 
-  //  sprintf(lines[9], liniya);
-  //strcpy(lines[9], liniya);
-  //lines[9] = liniya;//.toCharArray, liniya.length();//, '\0';
-  //liniya.toCharArray(lines[9], liniya.length() + 1);
-  //Serial.println(" tut tratatatatatatata MyBuffer");
-  Serial.println(liniya);//
-  //Serial.print("VSE");
-  //po
+  memcpy(lines0, lines1, sizeof lines1);
+  memcpy(lines1, lines2, sizeof lines2);
+  memcpy(lines2, lines3, sizeof lines3);
+  memcpy(lines3, lines4, sizeof lines4);
+  memcpy(lines4, lines5, sizeof lines5);
+  memcpy(lines5, lines6, sizeof lines6);
+  memcpy(lines6, lines7, sizeof lines7);
+  memcpy(lines7, lines8, sizeof lines8);
+  memcpy(lines8, lines9, sizeof lines9);
+
+  liniya.toCharArray(lines9, liniya.length() + 1); //OK dlya 1D bez [x][x]
+  pechat();
+}
+
+
+void pechat() {
+
+  tft.fillRect(0, 0, 320, 81, ILI9341_BLUE);////////// still have a lot of memory :)))
+  tft.setTextSize(1);
+
+  tft.setTextColor(ILI9341_WHITE, ILI9341_BLACK);
+
+  if ((lines0[0]) == 'T') tft.setTextColor(ILI9341_YELLOW, ILI9341_BLACK);
+  if ((lines0[0]) == 'R') tft.setTextColor(ILI9341_CYAN, ILI9341_BLACK);
+  tft.setCursor(-5, 1);
+  tft.print(lines0);
+
+  if ((lines1[0]) == 'T') tft.setTextColor(ILI9341_YELLOW, ILI9341_BLACK);
+  if ((lines2[0]) == 'R') tft.setTextColor(ILI9341_CYAN, ILI9341_BLACK);
+  tft.setCursor(-5, 9);
+  tft.print(lines1);
+
+  if ((lines2[0]) == 'T') tft.setTextColor(ILI9341_YELLOW, ILI9341_BLACK);
+  if ((lines2[0]) == 'R') tft.setTextColor(ILI9341_CYAN, ILI9341_BLACK);
+  tft.setCursor(-5, 17);
+  tft.print(lines2);
+
+  if ((lines3[0]) == 'T') tft.setTextColor(ILI9341_YELLOW, ILI9341_BLACK);
+  if ((lines3[0]) == 'R') tft.setTextColor(ILI9341_CYAN, ILI9341_BLACK);
+  tft.setCursor(-5, 25);
+  tft.print(lines3);
+
+  if ((lines4[0]) == 'T') tft.setTextColor(ILI9341_YELLOW, ILI9341_BLACK);
+  if ((lines4[0]) == 'R') tft.setTextColor(ILI9341_CYAN, ILI9341_BLACK);
+  tft.setCursor(-5, 33);
+  tft.print(lines4);
+
+  if ((lines5[0]) == 'T') tft.setTextColor(ILI9341_YELLOW, ILI9341_BLACK);
+  if ((lines5[0]) == 'R') tft.setTextColor(ILI9341_CYAN, ILI9341_BLACK);
+  tft.setCursor(-5, 41);
+  tft.print(lines5);
+
+  if ((lines6[0]) == 'T') tft.setTextColor(ILI9341_YELLOW, ILI9341_BLACK);
+  if ((lines6[0]) == 'R') tft.setTextColor(ILI9341_CYAN, ILI9341_BLACK);
+  tft.setCursor(-5, 49);
+  tft.print(lines6);
+
+  if ((lines7[0]) == 'T') tft.setTextColor(ILI9341_YELLOW, ILI9341_BLACK);
+  if ((lines7[0]) == 'R') tft.setTextColor(ILI9341_CYAN, ILI9341_BLACK);
+  tft.setCursor(-5, 57);
+  tft.print(lines7);
+
+  if ((lines8[0]) == 'T') tft.setTextColor(ILI9341_YELLOW, ILI9341_BLACK);
+  if ((lines8[0]) == 'R') tft.setTextColor(ILI9341_CYAN, ILI9341_BLACK);
+  tft.setCursor(-5, 65);
+  tft.print(lines8);
+
+  if ((lines9[0]) == 'T') tft.setTextColor(ILI9341_YELLOW, ILI9341_BLACK);
+  if ((lines9[0]) == 'R') tft.setTextColor(ILI9341_CYAN, ILI9341_BLACK);
+  tft.setCursor(-5, 73);
+  tft.print(lines9);
+
+  tft.setTextColor(ILI9341_WHITE, ILI9341_BLACK);
+  tft.setCursor(1, 231);
+  tft.print("Using logfile: ");
+  tft.print(sdate);
+  tft.setTextSize(2);
 }
