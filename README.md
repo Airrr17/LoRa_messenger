@@ -56,3 +56,4 @@ RTC SCL    - PB6
 
 
 ![alt text](https://github.com/Airrr17/LoRa_messenger/blob/master/LoRa1.jpg)
+![alt text](https://github.com/Airrr17/LoRa_messenger/blob/master/LoRa2.jpg)
