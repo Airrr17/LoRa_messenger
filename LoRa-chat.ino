@@ -73,7 +73,8 @@ char MyBuffer[textLimit];
 uint16_t xy[2];
 ts tiime;                                              //ts is a struct findable in ds3231.h
 char s[19];                                            //RTCtime sprint buffer
-char sdate[10];                                         //RTC date for filenaming
+char sdate[10];                                        //RTC date for filenaming
+bool sdini = 0;
 
 String liniya;
 
@@ -122,15 +123,21 @@ void setup() {
   DS3231_init(DS3231_INTCN);                     //register the ds3231 (DS3231_INTCN is the default address of ds3231, this is set by macro for no performance loss)
 
   delay (50);
-  if (!SD.begin(PA3)) {          //or (!SD.begin(PA3))  //(!SD.begin(PA3, SPI_FULL_SPEED))
-    tft.setTextSize(2);
-    tft.setCursor(0, 0);
-    tft.setTextColor(ILI9341_WHITE, ILI9341_RED);
-    tft.println(F("SDcard init. failed!"));
-    tft.print(F("       Try reset."));
-    delay(500);
-    Serial.println("SDcard init. failed! Try reset.");
-    while (1);
+
+  while (!sdini) {
+    if (!SD.begin(PA3)) {                        //(!SD.begin(PA3, SPI_FULL_SPEED));
+      tft.setTextSize(2);
+      tft.setCursor(0, 0);
+      tft.setTextColor(ILI9341_WHITE, ILI9341_RED);
+      tft.println(F("SDcard init. failed!"));
+      tft.println(F("(re)insert card now."));
+      Serial.println("SDcard init. failed! Retrying.");
+      gpio_write_bit(GPIOC, 13, !digitalRead(PC13));         // migat`!
+      delay (100);
+    }
+    else {
+      sdini = 1;
+    }
   }
 
   delay(50);
@@ -179,7 +186,6 @@ void setup() {
 
 
 
-
 void loop() {
 
   gpio_write_bit(GPIOC, 13, !digitalRead(PC13));         // migat` stsuk!
@@ -219,15 +225,13 @@ void loop() {
   }
 
 
-
-
   if (millis() % 1000 == 0) {   ////////////// Update CLOCK
     DS3231_get(&tiime);
     sprintf_P(s, PSTR("%02d.%02d.%02d  %02d:%02d:%02d"), tiime.mday, tiime.mon, tiime.year_s , tiime.hour, tiime.min, tiime.sec);
     sprintf_P(sdate, PSTR("%02d%02d%02d"), tiime.mday, tiime.mon, tiime.year);
-    tft.setTextSize(1);                               //Serial.println(s);
+    tft.setTextSize(1);
     tft.setTextColor(ILI9341_WHITE, ILI9341_BLACK);
-    tft.setCursor(211, 231);  //(211, 231)(200, 221)
+    tft.setCursor(211, 231);
     tft.print(s);
   }
 }
