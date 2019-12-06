@@ -20,10 +20,10 @@
 //byte b = LoRa.random();                     //Returns random byte.
 
 #define IsWithin(x, a, b) ((x>=a)&&(x<=b))
-#define TS_MINX 600  // 350   // 229       Adjust those manually!
-#define TS_MINY 300  // 236   // 236
-#define TS_MAXX 3800 // 3840  // 3840
-#define TS_MAXY 3800 //       // 3903
+#define TS_MINX 400  // 350   // 229       Adjust those manually!
+#define TS_MINY 200  // 236   // 236  DOWN
+#define TS_MAXX 3950 // 3840  // 3840
+#define TS_MAXY 3850 //       // 3903 UP
 
 //Colors:
 //#define ILI9341_BLACK       0x0000  ///<   0,   0,   0  Builtin commands:
@@ -67,8 +67,9 @@ const char Mobile_SymKeys[3][13] PROGMEM = {
 //======================================================================Vsyakaya hernya=====================================
 
 bool command = false;                                  //command or message? exec or send?
-bool calib = false;
+bool calib = false;                                    //Yellow touch calibration marks
 const char textLimit = 53;                             //Max message len
+unsigned int lightTimeout = 0;
 char MyBuffer[textLimit];
 uint16_t xy[2];
 ts tiime;                                              //ts is a struct findable in ds3231.h
@@ -108,12 +109,14 @@ void setup() {
   pinMode(PB10, INPUT);                          //Touch IRQ
   pinMode(PA4, OUTPUT);                          //TFT slave select
   pinMode(PA1, OUTPUT);                          //TFT DC
+  pinMode(PA2, OUTPUT);                          //TFT LED
   pinMode(PC13, OUTPUT);                         //OnBoard LED
   pinMode(PA3, OUTPUT);                          //SD card slave select
 
   gpio_write_bit(GPIOB, 11, 1);
   gpio_write_bit(GPIOA, 4, 1);
   gpio_write_bit(GPIOA, 3, 1);
+  gpio_write_bit(GPIOA, 2, 1);                   //LED on
 
   delay(100);                                    //USB serial init time.
   Wire.begin();                                  //For RTC. SCL-PB6, SDA-PB7
@@ -163,6 +166,7 @@ void setup() {
 
 
   tscr.begin();
+
   MakeKB_Button(Mobile_KB);
 
   DS3231_get(&tiime);    ///////////// dlya filename //////////////
@@ -202,7 +206,7 @@ void loop() {
   int packetSize = LoRa.parsePacket();
   if (packetSize) {
     // received a packet
-
+    gpio_write_bit(GPIOA, 2, 1), lightTimeout = 0;                   //LED on
     myFile.print(s);
     myFile.print("  Rx: ");
 
@@ -233,6 +237,8 @@ void loop() {
     tft.setTextColor(ILI9341_WHITE, ILI9341_BLACK);
     tft.setCursor(211, 231);
     tft.print(s);
+    lightTimeout ++;
+    if (lightTimeout >= 30) gpio_write_bit(GPIOA, 2, 0), lightTimeout = 30;                   //LED off
   }
 }
 
@@ -244,10 +250,11 @@ byte TouchButton(int x, int y, int w, int h)
   int X, Y;
   if (tscr.read_XY(xy)) {
 
-    Y = map(xy[1], TS_MINY, TS_MAXY, 0, 240); //240
-    X = map(xy[0], TS_MINX, TS_MAXX, 0, 320);  //320
+    Y = map(xy[1], TS_MINY, TS_MAXY, 240, 0);  //TS_MINY, TS_MAXY, 0, 240 //need to mirror?
+    X = map(xy[0], TS_MINX, TS_MAXX, 0, 320);  //TS_MINX, TS_MAXX, 0, 320
 
     if (calib) tft.drawPixel( X, Y, ILI9341_YELLOW);  ////////////////////////////////////////////////////////////// for touching debug or calibrating
+    gpio_write_bit(GPIOA, 2, 1), lightTimeout = 0;                   //LED on
 
     return (IsWithin(X, x, x + w) & IsWithin(Y, y, y + h));
   }
@@ -431,9 +438,9 @@ void GetKeyPress(char * textBuffer) {
         myFile.println(textBuffer);
         myFile.flush();
 
-        //  LoRa.beginPacket();      /////////////////// UNCOMENT FOR REAL SENDING!!!//////////////////////
-        //  LoRa.print(textBuffer);
-        //  LoRa.endPacket();
+          LoRa.beginPacket();      /////////////////// UNCOMENT FOR REAL SENDING!!!//////////////////////
+          LoRa.print(textBuffer);
+          LoRa.endPacket();
 
         liniya = String(textBuffer);
         liniya = 'T' + liniya;
@@ -464,7 +471,7 @@ void GetKeyPress(char * textBuffer) {
 
 void moveUP() {
 
-  memcpy(lines0, lines1, sizeof lines1);
+  memcpy(lines0, lines1, sizeof lines1); //Ugly code goes from here and on
   memcpy(lines1, lines2, sizeof lines2);
   memcpy(lines2, lines3, sizeof lines3);
   memcpy(lines3, lines4, sizeof lines4);
