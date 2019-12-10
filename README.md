@@ -1,4 +1,4 @@
-#Blue pill STM32 based broadcast* rawtext communication device.  
+# Blue pill STM32 based broadcast* rawtext communication device.  
 (*means for privet chatroom or smallgroup chatting you'll need to manage one or more settings:  
 SpreadingFactor, Bandwidth, CodingRate and syncWord or even implement encryption with AESLib.)  
 There is NO receive confirmation implemented yet.  
@@ -8,10 +8,10 @@ There is NO receive confirmation implemented yet.
 You can view received messages on screen and send with onscreen keyboard.  
   
 You will need:  
--Blue pill board with arduino bootloader. (a 64k version can be used). $1.85  
--ili9341 TFT with touch and SD card (2.2, 2.4 or 2.8"). $6.24  
--DS3231 RTC, as stm32's RTC wont _increment_ time without power (of course with Vbat present). My bad. $0.74  
--RA-02 LoRa module. $3.37  
+- Blue pill board with arduino bootloader. (a 64k version can be used). $1.85  
+- ili9341 TFT with touch and SD card (2.2, 2.4 or 2.8"). $6.24  
+- DS3231 RTC, as stm32's RTC wont _increment_ time without power (of course with Vbat present). My bad. $0.74  
+- RA-02 LoRa module. $3.37  
   
 *To communicate youll need atleast two devices :)!!!!!!!!!!!!!!!!!!!!!!!!!!!!  
   
@@ -51,8 +51,8 @@ DS3231 SCL    - PB6
   
 ![alt text](https://github.com/Airrr17/LoRa_messenger/blob/master/LoRa2.jpg)  
   
-  
-How to setup proper touch position:  
+## How to setup proper touch position:  
+
 Start programm and enter "calibON" command or modify line 256.  
 Touch anywhere and see how far touched point being painted yellow.  
 Adjust in code TS_MINX, TS_MINY, TS_MAXX and TS_MAXY and recompile. :)  
@@ -60,11 +60,11 @@ Adjust in code TS_MINX, TS_MINY, TS_MAXX and TS_MAXY and recompile. :)
 Set DS3231 time and date with sketch from DS3231 library.  
 Please use only libraries mentioned in the code (ds3231.h and XPT2046_touch.h).  
   
-  
-ToDo:  
--Adjust clock and date via interface command.  
--Set\show freq, SpreadingFactor, Bandwidth, CodingRate and syncWord via interface commands.  
--Makeup code to use 2D messages array instead of 10 arrays :)  
--Better tr\rx messages color marking with alligning to both sides (SMS style).  
--Show battery voltage on tft.  
--Vibrate\beeper on msg receive.
+## ToDo:  
+
+- Adjust clock and date via interface command.  
+- Set\show freq, SpreadingFactor, Bandwidth, CodingRate and syncWord via interface commands.  
+- Makeup code to use 2D messages array instead of 10 arrays :)  
+- Better tr\rx messages color marking with alligning to both sides (SMS style).  
+- Show battery voltage on tft.  
+- Vibrate\beeper on msg receive.
