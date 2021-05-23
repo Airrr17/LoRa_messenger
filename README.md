@@ -28,8 +28,8 @@ To repeat setup process delete settings.txt or command "resetconfig" then send.
   
 +v1.1 Much more debug information printed on screen during boot or setup.  
 +v1.1 Current LORA settings are displayed at startup.  
-+v1.1 To set time and date use command  "TssmmhhWDDMMYYYY" (ie T003201123052021) W = 1 - Sunday, 2 - Monday, and so on.  
-      Then press send.  
++v1.1 To set time and date use command  "TssmmhhWDDMMYYYY" (ie T003201123052021) W = 1 - Sunday,  
+2 - Monday, and so on. Then press send.  
 +v1.1 Here is _LoRa-Heltek.ino_ for HELTEK LoRa32 (esp32) board. This provides compatible hardware for communication tests.  
 Already assembled board. Thus you can set up only one LoRa_messenger and test settings or range with heltek.  
 Software prints last received message on OLED and sends packets on PRG button press.  
