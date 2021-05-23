@@ -22,7 +22,16 @@ You will be prompted to move stylus over corners until counter became 0.
 Just follow the instructions on the screen.  
 Then setup will create "config.txt" file on SD root.  
 First four lines is calibrated X-Y positions. Do not change!  
-Others are for LORA setup. Changing those values leads to communication variants.  
+Others are for LORA setup. Changing those values leads to communication variants:  
+  
+LoraFreq 137000000 to 525000000  
+TxPower 1 to 20  
+SpreadingFactor 6 to 12  
+SignalBandwidth 7800 to 500000 (7800, 10400, 15600, 20800, 31250, 41700, 62500, 125000, 250000, 500000)  
+CodingRate4 5 to 8  
+SyncWord  1 to 254  
+Crc 0 or 1  
+  
 Two or more units with the same settings only will communicate.  
 To repeat setup process delete settings.txt or command "resetconfig" then send.  
   

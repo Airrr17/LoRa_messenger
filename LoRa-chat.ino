@@ -188,7 +188,7 @@ void setup() {
     if (configtxt == 0) tft.print("SpreadingFactor = "), tft.println(SpreadingFactor);
 
     if ((n = myFile.fgets(lineT, sizeof(lineT))) > 0) SignalBandwidth = String(lineT).toInt();
-    if ((SignalBandwidth < 78000) or (SignalBandwidth > 500000)) tft.println(F("SignalBandwidth value error.")), configtxt = 1;      //config.txt error flag ON
+    if ((SignalBandwidth < 7800) or (SignalBandwidth > 500000)) tft.println(F("SignalBandwidth value error.")), configtxt = 1;       //config.txt error flag ON
     if (configtxt == 0) tft.print("SignalBandwidth = "), tft.println(SignalBandwidth);
 
     if ((n = myFile.fgets(lineT, sizeof(lineT))) > 0) CodingRate4 = String(lineT).toInt();
