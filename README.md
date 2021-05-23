@@ -74,12 +74,14 @@ i2c:
 DS3231 SDA    - PB7  
 DS3231 SCL    - PB6  
   
+![alt text](https://github.com/Airrr17/LoRa_messenger/blob/master/block.png)  
+  
 ![alt text](https://github.com/Airrr17/LoRa_messenger/blob/master/LoRa1.jpg)  
   
 ![alt text](https://github.com/Airrr17/LoRa_messenger/blob/master/LoRa2.jpg)  
   
 ## How to setup proper touch position:  
-
+  
 UPD v1.1: Built-in calibration and time setting are implemented.  
 Obsolete:  
 Start programm and enter "calibON" command or modify line 256.  
