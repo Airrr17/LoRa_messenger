@@ -35,15 +35,17 @@ This custom PCB was designed as a shield for the ILI9341 2.4" LCD module and inc
 To build yourself [see schematic.](pics/full_sch.png)  
 &nbsp;  
   
-An SD card is *mandatory*! Your personal ID on this network is based on the SD card’s serial number (xx^xx+xx^xx = xxxx).  
-The SD card also contains your settings file, including touch positions, as well as logs with additional information for  
-every packet: signal-to-noise ratio (SNR), date, time, welcome message, and more.  
+An SD card is *mandatory*!  
+Your personal ID on this network is based on the SD card’s serial number (xx^xx+xx^xx = xxxx).  
+The SD card also contains your settings file, including touch positions, as well as logs with additional  
+information for every packet: signal-to-noise ratio (SNR), date, time, welcome message, and more.  
 It's similar to a SIM card's IMEI, primarily used to "color" your messages.  
   
 The log file is created daily and is named using the format 'DDMMYYYY'.  
   
-No MCU EEPROM, MCU serial number, or LoRa module serial number are used. Every device is identical to one another  
-until your SD card is inserted! So, to erase all traces, keep the card off the device or destroy.  
+No MCU EEPROM, MCU serial number, or LoRa module serial number are used.  
+Every device is identical to one another until your SD card is inserted!  
+So, to erase all traces, keep the card off the device or destroy.  
   
 &nbsp;  
   
@@ -110,13 +112,10 @@ To send packet via serial just send "msg text". Date, time, your ID and other in
 <u>TFT, SD, LoRa and Touch SPI:</u> SCK - PA5, MISO - PA6, MOSI - PA7.  
 <u>i2c DS3231 RTC:</u> SDA - PB7, SCL - PB6.  
 
-Don't have to burn any bootloader. SWD is here! After flashing the MCU connect TFT and you'll be taken through setup process.  
-**Short Boot0 and Boot1 to ground!**  
+Don't have to burn any bootloader. SWD is here!  
+After flashing the MCU connect TFT and you'll be taken through setup process.  
   
-
-
-
-
+**Short Boot0 and Boot1 to ground!**  
 
   
 <u>Minimum parts:</u>  
@@ -159,27 +158,20 @@ And interface:
 Arduino and PUTTY interfaces:  
 ![arduino](pics/text_ard.png)
 ![putty](pics/text_putty.png)
-
- 
-
-
   
-  
-&nbsp;
-&nbsp;
-&nbsp;
-&nbsp;
+&nbsp;  
+&nbsp;  
+&nbsp;  
+&nbsp;  
 ##########################################  
-&nbsp;
+&nbsp;  
 Left here for historical information only:  
 &nbsp;  
 ##########################################  
-&nbsp;
-&nbsp;
-&nbsp;
-&nbsp;
-  
-  
+&nbsp;  
+&nbsp;  
+&nbsp;  
+&nbsp;  
   
 # VERSION 1.1 update (23.05.21):  
 Since v1.1 you don't need to calibrate touch positions anymore. Not even compile the sources. Wire up all together.  
