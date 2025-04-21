@@ -159,7 +159,9 @@ Arduino and PUTTY interfaces:
 ![arduino](pics/text_ard.png)
 ![putty](pics/text_putty.png)
   
-&nbsp;  
+&nbsp;
+Video:  
+[![video](https://img.youtube.com/vi/VuSKwDlefvc/0.jpg)](https://www.youtube.com/watch?v=VuSKwDlefvc)
 &nbsp;  
 &nbsp;  
 &nbsp;  
