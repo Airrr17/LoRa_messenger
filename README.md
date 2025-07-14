@@ -71,13 +71,17 @@ Packet forming:
   
 &nbsp;  
   
-**Using as serial terminal with putty or any else (@115.2):**  
+**Using as serial terminal with PUTTY or any else (@115.2):**  
 On transmit, parse line: <u>22.03.25  23:36:30  >>> 00000000-11111111-x-y-0602:test msg 01:</u>  
 On receive, parse this: <u>22.03.25  23:36:56  <<< 00000000-11111111-x-y-5D1F:reply msg 01:RSSI=-50:SNR=8.50:FE=4294</u>  
 "<<<" means RX, ">>>" TX. Chars "-" and ":" are separators. Here "0602" and "5D1F" are IDs.  
 To send packet via serial just send "msg text". Date, time, your ID and other info will be auto added in transmission.  
   
 &nbsp;  
+  
+Hardware connections:  
+&nbsp;  
+**<u>TFT, SD, LoRa and Touch SPI bus:</u> SCK - PA5, MISO - PA6, MOSI - PA7.**  
   
 <table>
 <tr><th>Hardware</th><th>Pins</th></tr>
@@ -109,10 +113,11 @@ To send packet via serial just send "msg text". Date, time, your ID and other in
 </td></tr> </table>
    
   
-<u>TFT, SD, LoRa and Touch SPI:</u> SCK - PA5, MISO - PA6, MOSI - PA7.  
-<u>i2c DS3231 RTC:</u> SDA - PB7, SCL - PB6.  
 
-Don't have to burn any bootloader. SWD is here!  
+
+&nbsp;
+
+Don't have to burn any bootloader. ST-LINK is here!  
 After flashing the MCU connect TFT and you'll be taken through setup process.  
   
 **Short Boot0 and Boot1 to ground!**  
